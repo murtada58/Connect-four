@@ -1,0 +1,6 @@
+frontend-svelte/node_modules/
+frontend-svelte/public/build/
+
+frontend-svelte/.DS_Store
+
+backend/venv
