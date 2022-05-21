@@ -1,4 +1,6 @@
-.env
+.env.dev
+.env.prod
+
 frontend-svelte/node_modules/
 frontend-svelte/public/build/
 

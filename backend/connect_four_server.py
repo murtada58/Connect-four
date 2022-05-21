@@ -4,11 +4,16 @@ import asyncio
 import json
 import websockets
 from datetime import datetime
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 
+dotenv_path = join(dirname(__file__), '.env.dev')
+load_dotenv(dotenv_path)
 
-# set to "localhost" or your servers ip if you want to host your own server
-SERVER_IP = "localhost"  # "176.58.109.37"
-PORT = 6789
+PEPPER = os.environ.get("PEPPER")
+SERVER_IP = os.environ.get("SERVER_IP")
+SERVER_PORT = os.environ.get("SERVER_PORT")
 
 USERS = set()
 USERS_DETAILS = {}
@@ -71,7 +76,7 @@ async def game(websocket, path):
 
 
 async def main():
-    async with websockets.serve(game, SERVER_IP, PORT):  # , ssl=ssl_context):
+    async with websockets.serve(game, SERVER_IP, SERVER_PORT):  # , ssl=ssl_context):
         await asyncio.Future()  # run forever
 
 
