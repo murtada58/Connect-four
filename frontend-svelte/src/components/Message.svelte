@@ -16,15 +16,21 @@
     ? 'current-user'
     : 'not-current-user'}"
 >
-  {#if !messageFromCurrentUser}
-    <div class="message-name" style="color: {messageUsernameColor};">
-      {`${messageUsername}#${messageUserId}`}
-    </div>
-  {/if}
+  <div
+    class="message-name"
+    style="color: {messageUsernameColor}; text-align: {messageFromCurrentUser
+      ? 'right'
+      : 'left'};"
+  >
+    {`${messageUsername}#${messageUserId}`}
+  </div>
   <p class="message">
     {messageText}
   </p>
-  <div class="message-time">
+  <div
+    class="message-time"
+    style="text-align: {messageFromCurrentUser ? 'right' : 'left'};"
+  >
     {messageTime}
   </div>
 </div>
@@ -53,7 +59,6 @@
 
     .message-name {
       grid-area: name;
-      text-align: left;
       overflow-x: auto;
       overflow-wrap: break-word;
     }
@@ -68,7 +73,6 @@
 
     .message-time {
       grid-area: time;
-      text-align: right;
       font-size: 1rem;
       color: #777777;
     }
