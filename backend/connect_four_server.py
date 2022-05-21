@@ -43,12 +43,14 @@ async def game(websocket, path):
             print("Recieved message: " + message)
 
             if data["action"] == "nameChange":
+                if len(data["username"]) > 20:
+                    return
                 USERS_DETAILS[websocket]["username"] = data["username"]
 
             elif data["action"] == "message":
-                if (websocket not in CHAT_ROOMS[data["chatRoom"]]):
+                if websocket not in CHAT_ROOMS[data["chatRoom"]]:
                     return
-                if (len(data["message"].strip()) == 0):
+                if len(data["message"].strip()) == 0:
                     return
                 websockets.broadcast(CHAT_ROOMS[data["chatRoom"]], json.dumps({
                     "type": "message",

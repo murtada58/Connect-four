@@ -18,7 +18,7 @@
 /* Handle */
 ::-webkit-scrollbar-thumb {
 	background: rgba(0, 0, 0, 0.4);
-	border-radius: 20px;
+	border-radius: 100vw;
 }
 
 /* Handle on hover */
@@ -98,11 +98,11 @@ button:focus {
 
 
 .container {
-	border: rgba(255, 255, 255, 0.1) 1px solid;
+	border-width: 0;
 	border-radius: 1.5rem;
 	backdrop-filter: blur(10px);
 	background: rgba(0, 0, 0, 0.3);
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
 	padding: 1rem 1rem;
 	text-align: center;
 }

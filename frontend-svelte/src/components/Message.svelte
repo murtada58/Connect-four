@@ -54,6 +54,8 @@
     .message-name {
       grid-area: name;
       text-align: left;
+      overflow-x: auto;
+      overflow-wrap: break-word;
     }
 
     .message {

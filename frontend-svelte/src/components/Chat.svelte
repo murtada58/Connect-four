@@ -77,7 +77,7 @@
           chatWindowElement.scrollHeight -
             chatWindowElement.offsetHeight -
             chatWindowElement.scrollTop <=
-          0;
+          10;
       }
       lastScrollTop = chatWindowElement.scrollTop;
     }}
