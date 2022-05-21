@@ -1,3 +1,4 @@
+.env
 frontend-svelte/node_modules/
 frontend-svelte/public/build/
 
