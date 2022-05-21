@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+from helpers.get_random_colour import get_random_colour
 
 dotenv_path = join(dirname(__file__), ".env.dev")
 load_dotenv(dotenv_path)
@@ -29,7 +30,7 @@ async def game(websocket, path):
         USERS_DETAILS[websocket] = {
             "userId": new_user_id,
             "username": "Guest",
-            "usernameColor": "#FF0000",
+            "usernameColor": get_random_colour(min_lightness=70, min_saturation=90),
         }
         await websocket.send(
             json.dumps(

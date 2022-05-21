@@ -6,4 +6,5 @@ frontend-svelte/public/build/
 
 frontend-svelte/.DS_Store
 
-backend/venv
+backend/venv/
+__pycache__/
