@@ -11,28 +11,61 @@ SERVER_IP = "localhost"  # "176.58.109.37"
 PORT = 6789
 
 USERS = set()
-
+USERS_DETAILS = {}
+CHAT_ROOMS = {"general": USERS}
 new_user_id = 1
 
 
 async def game(websocket, path):
-    global new_game_id
     global new_user_id
     try:
-        USERS.add(websocket)
         new_user_id += 1
-        websockets.broadcast(USERS, json.dumps({"message": "New user joined"}))
-        print("New user joined")
+        USERS.add(websocket)
+        USERS_DETAILS[websocket] = {
+            "userId": new_user_id,
+            "username": "Guest",
+            "usernameColor": "#FF0000"
+        }
+        await websocket.send(json.dumps({
+            "type": "username",
+            "userId": USERS_DETAILS[websocket]["userId"],
+            "username": USERS_DETAILS[websocket]["username"],
+            "usernameColor": USERS_DETAILS[websocket]["usernameColor"]
+        }))
+        websockets.broadcast(USERS, json.dumps({
+            "type": "user",
+            "count": len(USERS)
+        }))
+        print("New user joined: ")
 
         async for message in websocket:
             data = json.loads(message)
             print("Recieved message: " + message)
-            if data["action"] == "name_change":
-                pass
-            else:
-                pass
+
+            if data["action"] == "nameChange":
+                USERS_DETAILS[websocket]["username"] = data["username"]
+
+            elif data["action"] == "message":
+                if (websocket not in CHAT_ROOMS[data["chatRoom"]]):
+                    return
+                if (len(data["message"].strip()) == 0):
+                    return
+                websockets.broadcast(CHAT_ROOMS[data["chatRoom"]], json.dumps({
+                    "type": "message",
+                    "chatRoom": data["chatRoom"],
+                    "userId": USERS_DETAILS[websocket]["userId"],
+                    "username": USERS_DETAILS[websocket]["username"],
+                    "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
+                    "message": data["message"],
+                    "time": datetime.now().strftime('%I:%M:%p')
+                }))
+
     finally:
         USERS.remove(websocket)
+        websockets.broadcast(USERS, json.dumps({
+            "type": "user",
+            "count": len(USERS)
+        }))
 
 
 async def main():

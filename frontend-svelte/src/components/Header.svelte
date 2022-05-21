@@ -1,24 +1,30 @@
 <script>
   import { websocket } from "../stores";
+  import UserCount from "./UserCount.svelte";
+  import Username from "./Username.svelte";
 
-  let numberOfUsersOnline = 2;
-  let userIdentificationNumber = 5123;
-  let userName = "Murtada";
-
-  function clickHeader() {
-    console.log("Header clicked");
-    $websocket.send(JSON.stringify({ action: "Header" }));
-  }
+  let innerWidth = 0;
+  let innerHeight = 0;
 </script>
 
-<div class="header" on:click={clickHeader}>
-  <h2>Users online: {numberOfUsersOnline}</h2>
-  <h2>#{userIdentificationNumber}</h2>
-  <h2>{userName}</h2>
+<svelte:window bind:innerWidth bind:innerHeight />
+
+<div class="header container">
+  <div class="right-header-section">
+    <UserCount />
+  </div>
+  {#if innerWidth > 800}
+    <div class="left-header-section">
+      <Username />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
   .header {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>
