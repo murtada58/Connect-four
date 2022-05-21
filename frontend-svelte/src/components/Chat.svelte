@@ -12,6 +12,7 @@
   let autoScroll = true;
   let messages = [];
   let lastScrollTop = 0;
+  let resetText = false;
 
   const handleMessage = (message) => {
     if (message.trim().length === 0) {
@@ -97,13 +98,17 @@
       if (event.key === "Shift") {
         shiftKeyDown = true;
       }
+      if (event.key === "Enter" && !shiftKeyDown) {
+        resetText = true;
+      }
       event.key === "Enter" && !shiftKeyDown && handleMessage(this.value);
     }}
     on:keyup={function (event) {
       if (event.key === "Shift") {
         shiftKeyDown = false;
       }
-      if (event.key === "Enter" && !shiftKeyDown) {
+      if (event.key === "Enter" && resetText) {
+        resetText = false;
         messageInputElement.value = "";
         messageInputElementText = "";
       }
