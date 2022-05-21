@@ -8,7 +8,7 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
-dotenv_path = join(dirname(__file__), '.env.dev')
+dotenv_path = join(dirname(__file__), ".env.dev")
 load_dotenv(dotenv_path)
 
 PEPPER = os.environ.get("PEPPER")
@@ -29,18 +29,19 @@ async def game(websocket, path):
         USERS_DETAILS[websocket] = {
             "userId": new_user_id,
             "username": "Guest",
-            "usernameColor": "#FF0000"
+            "usernameColor": "#FF0000",
         }
-        await websocket.send(json.dumps({
-            "type": "username",
-            "userId": USERS_DETAILS[websocket]["userId"],
-            "username": USERS_DETAILS[websocket]["username"],
-            "usernameColor": USERS_DETAILS[websocket]["usernameColor"]
-        }))
-        websockets.broadcast(USERS, json.dumps({
-            "type": "user",
-            "count": len(USERS)
-        }))
+        await websocket.send(
+            json.dumps(
+                {
+                    "type": "username",
+                    "userId": USERS_DETAILS[websocket]["userId"],
+                    "username": USERS_DETAILS[websocket]["username"],
+                    "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
+                }
+            )
+        )
+        websockets.broadcast(USERS, json.dumps({"type": "user", "count": len(USERS)}))
         print("New user joined: ")
 
         async for message in websocket:
@@ -57,22 +58,24 @@ async def game(websocket, path):
                     return
                 if len(data["message"].strip()) == 0:
                     return
-                websockets.broadcast(CHAT_ROOMS[data["chatRoom"]], json.dumps({
-                    "type": "message",
-                    "chatRoom": data["chatRoom"],
-                    "userId": USERS_DETAILS[websocket]["userId"],
-                    "username": USERS_DETAILS[websocket]["username"],
-                    "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
-                    "message": data["message"],
-                    "time": datetime.now().strftime('%I:%M:%p')
-                }))
+                websockets.broadcast(
+                    CHAT_ROOMS[data["chatRoom"]],
+                    json.dumps(
+                        {
+                            "type": "message",
+                            "chatRoom": data["chatRoom"],
+                            "userId": USERS_DETAILS[websocket]["userId"],
+                            "username": USERS_DETAILS[websocket]["username"],
+                            "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
+                            "message": data["message"],
+                            "time": datetime.now().strftime("%I:%M:%p"),
+                        }
+                    ),
+                )
 
     finally:
         USERS.remove(websocket)
-        websockets.broadcast(USERS, json.dumps({
-            "type": "user",
-            "count": len(USERS)
-        }))
+        websockets.broadcast(USERS, json.dumps({"type": "user", "count": len(USERS)}))
 
 
 async def main():
