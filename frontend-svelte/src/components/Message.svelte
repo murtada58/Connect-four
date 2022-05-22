@@ -1,37 +1,31 @@
 <script>
-  import { onMount } from "svelte";
+  import { user } from "../stores";
+  export let message;
 
-  import { userId } from "../stores";
-  export let messageUserId;
-  export let messageUsername;
-  export let messageUsernameColor;
-  export let messageText;
-  export let messageTime;
-
-  const messageFromCurrentUser = messageUserId === $userId;
+  const isMessageFromCurrentUser = message.user.id === $user.id;
 </script>
 
 <div
-  class="message-container container {messageFromCurrentUser
+  class="message-container container {isMessageFromCurrentUser
     ? 'current-user'
     : 'not-current-user'}"
 >
   <div
     class="message-name"
-    style="color: {messageUsernameColor}; text-align: {messageFromCurrentUser
+    style="color: {message.user.color}; text-align: {isMessageFromCurrentUser
       ? 'right'
       : 'left'};"
   >
-    {`${messageUsername}#${messageUserId}`}
+    {`${message.user.name}#${message.user.id}`}
   </div>
   <p class="message">
-    {messageText}
+    {message.text}
   </p>
   <div
     class="message-time"
-    style="text-align: {messageFromCurrentUser ? 'right' : 'left'};"
+    style="text-align: {isMessageFromCurrentUser ? 'right' : 'left'};"
   >
-    {messageTime}
+    {message.time}
   </div>
 </div>
 

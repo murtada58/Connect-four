@@ -1,5 +1,4 @@
 <script>
-  import { websocket } from "./stores";
   import Header from "./components/Header.svelte";
   import ActiveGamesList from "./components/ActiveGamesList.svelte";
   import Chat from "./components/Chat.svelte";
@@ -17,7 +16,7 @@
 
   {#if innerWidth > 800}
     <div class="general-chat">
-      <Chat />
+      <Chat chatRoom="general" />
     </div>
   {/if}
 

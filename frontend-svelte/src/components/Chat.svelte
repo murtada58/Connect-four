@@ -1,8 +1,10 @@
 <script>
   import { onMount } from "svelte";
 
-  import { websocket } from "../stores";
+  import { eventTypes, websocket } from "../stores";
   import Message from "./Message.svelte";
+
+  export let chatRoom;
 
   let messageInputElement;
   let messageInputElementText = "";
@@ -14,16 +16,18 @@
   let lastScrollTop = 0;
   let resetText = false;
 
-  const handleMessage = (message) => {
-    if (message.trim().length === 0) {
+  const handleMessage = (messageText) => {
+    if (messageText.trim().length === 0) {
       return;
     }
 
     $websocket.send(
       JSON.stringify({
-        action: "message",
+        type: $eventTypes.MESSAGE,
         chatRoom: "general",
-        message: message,
+        message: {
+          text: messageText,
+        },
       })
     );
     messageInputElement.value = "";
@@ -32,25 +36,17 @@
 
   $websocket.addEventListener("message", (event) => {
     const data = JSON.parse(event.data);
-    if (!["message"].includes(data.type)) {
+    if (![$eventTypes.MESSAGE].includes(data.type)) {
       return;
     }
 
-    if (data.chatRoom !== "general") {
+    if (data.chatRoom !== chatRoom) {
       return;
     }
 
-    messages = [
-      ...messages,
-      {
-        messageUserId: data.userId,
-        messageUsername: data.username,
-        messageUsernameColor: data.usernameColor,
-        messageText: data.message,
-        messageTime: data.time,
-      },
-    ];
+    messages = [...messages, data.message];
   });
+
   let previousTimeStamp = 0;
   const autoScrollHandler = (timeStamp) => {
     let deltaTime = (timeStamp - previousTimeStamp) / 1000; // time between frames in seconds
@@ -84,7 +80,7 @@
     }}
   >
     {#each messages as message, index (index)}
-      <Message {...message} />
+      <Message {message} />
     {/each}
   </div>
   <textarea

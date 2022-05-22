@@ -1,11 +1,11 @@
 <script>
-  import { websocket } from "../stores";
+  import { eventTypes, websocket } from "../stores";
 
   let numberOfUsersOnline = 0;
 
   $websocket.addEventListener("message", (event) => {
     const data = JSON.parse(event.data);
-    if (!["user"].includes(data.type)) {
+    if (![$eventTypes.USER_COUNT].includes(data.type)) {
       return;
     }
 

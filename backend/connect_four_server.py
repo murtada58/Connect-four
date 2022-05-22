@@ -3,11 +3,17 @@
 import asyncio
 import json
 import websockets
-from datetime import datetime
+from websockets.legacy.server import WebSocketServerProtocol
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-from helpers.get_random_colour import get_random_colour
+from classes.App import App
+from classes.EventTypes import EventTypes
+from events.new_user_join_event import new_user_join_event
+from events.user_leave_event import user_leave_event
+from events.name_change_event import name_change_event
+from events.message_event import message_event
+
 
 dotenv_path = join(dirname(__file__), ".env.dev")
 load_dotenv(dotenv_path)
@@ -16,70 +22,35 @@ PEPPER = os.environ.get("PEPPER")
 SERVER_IP = os.environ.get("SERVER_IP")
 SERVER_PORT = os.environ.get("SERVER_PORT")
 
-USERS = set()
-USERS_DETAILS = {}
-CHAT_ROOMS = {"general": USERS}
-new_user_id = 1
+app = App(
+    {
+        EventTypes.NEW_USER: new_user_join_event,
+        EventTypes.USER_LEAVE: user_leave_event,
+        EventTypes.NAME_CHANGE: name_change_event,
+        EventTypes.MESSAGE: message_event,
+    }
+)
 
 
-async def game(websocket, path):
-    global new_user_id
+async def game(websocket: WebSocketServerProtocol, path: str) -> None:
     try:
-        new_user_id += 1
-        USERS.add(websocket)
-        USERS_DETAILS[websocket] = {
-            "userId": new_user_id,
-            "username": "Guest",
-            "usernameColor": get_random_colour(min_lightness=50, min_saturation=80),
-        }
-        await websocket.send(
-            json.dumps(
-                {
-                    "type": "username",
-                    "userId": USERS_DETAILS[websocket]["userId"],
-                    "username": USERS_DETAILS[websocket]["username"],
-                    "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
-                }
-            )
-        )
-        websockets.broadcast(USERS, json.dumps({"type": "user", "count": len(USERS)}))
-        print("New user joined: ")
+        await app.handle_event(websocket, {"type": EventTypes.NEW_USER})
 
         async for message in websocket:
             data = json.loads(message)
-            print("Recieved message: " + message)
+            print(
+                "\nReceived message: \n",
+                json.dumps(data, indent=4, sort_keys=True),
+                end="\n\n",
+            )
 
-            if data["action"] == "nameChange":
-                if len(data["username"]) > 20:
-                    return
-                USERS_DETAILS[websocket]["username"] = data["username"]
-
-            elif data["action"] == "message":
-                if websocket not in CHAT_ROOMS[data["chatRoom"]]:
-                    return
-                if len(data["message"].strip()) == 0:
-                    return
-                websockets.broadcast(
-                    CHAT_ROOMS[data["chatRoom"]],
-                    json.dumps(
-                        {
-                            "type": "message",
-                            "chatRoom": data["chatRoom"],
-                            "userId": USERS_DETAILS[websocket]["userId"],
-                            "username": USERS_DETAILS[websocket]["username"],
-                            "usernameColor": USERS_DETAILS[websocket]["usernameColor"],
-                            "message": data["message"],
-                            "time": datetime.now().strftime("%I:%M:%p"),
-                        }
-                    ),
-                )
+            await app.handle_event(websocket, data)
 
     finally:
-        USERS.remove(websocket)
-        websockets.broadcast(USERS, json.dumps({"type": "user", "count": len(USERS)}))
+        await app.handle_event(websocket, {"type": EventTypes.USER_LEAVE})
 
 
-async def main():
+async def main() -> None:
     async with websockets.serve(game, SERVER_IP, SERVER_PORT):  # , ssl=ssl_context):
         await asyncio.Future()  # run forever
 

@@ -1,34 +1,31 @@
 <script>
-  import { websocket, userId, username, usernameColor } from "../stores";
+  import { eventTypes, websocket, user } from "../stores";
 
   let usernameTextWidth = 0;
-  let displayUsername = $username;
+  let displayUsername = $user.name;
 
   const handleUsernameChange = (displayUsername) => {
-    console.log("handling username change: ", displayUsername);
-    if ($username === displayUsername) {
+    if ($user.name === displayUsername) {
       return;
     }
 
-    username.set(displayUsername);
+    user.set({ ...$user, name: displayUsername });
     $websocket.send(
       JSON.stringify({
-        action: "nameChange",
-        username: displayUsername,
+        type: $eventTypes.NAME_CHANGE,
+        user: { name: displayUsername },
       })
     );
   };
 
   $websocket.addEventListener("message", (event) => {
     const data = JSON.parse(event.data);
-    if (!["username"].includes(data.type)) {
+    if (![$eventTypes.USER_DETAILS].includes(data.type)) {
       return;
     }
 
-    userId.set(data.userId);
-    username.set(data.username);
-    usernameColor.set(data.usernameColor);
-    displayUsername = data.username;
+    user.set(data.user);
+    displayUsername = data.user.name;
   });
 </script>
 
@@ -45,10 +42,10 @@
     bind:value={displayUsername}
     style="width: {displayUsername === ''
       ? 190
-      : usernameTextWidth}px; color: {$usernameColor};"
+      : usernameTextWidth}px; color: {$user.color};"
     on:blur={() => handleUsernameChange(displayUsername)}
   />
-  <h2 style="color: {$usernameColor};">#{$userId}</h2>
+  <h2 style="color: {$user.color};">#{$user.id}</h2>
 </div>
 
 <style lang="scss">

@@ -1,5 +1,4 @@
 <script>
-  import { websocket } from "../stores";
   import UserCount from "./UserCount.svelte";
   import Username from "./Username.svelte";
 
