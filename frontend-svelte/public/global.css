@@ -106,7 +106,7 @@ button:focus {
 	border-radius: 1.5rem;
 	backdrop-filter: blur(10px);
 	background: rgba(0, 0, 0, 0.3);
-    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
 	padding: 1rem 1rem;
 	text-align: center;
 }

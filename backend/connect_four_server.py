@@ -30,7 +30,7 @@ async def game(websocket, path):
         USERS_DETAILS[websocket] = {
             "userId": new_user_id,
             "username": "Guest",
-            "usernameColor": get_random_colour(min_lightness=70, min_saturation=90),
+            "usernameColor": get_random_colour(min_lightness=50, min_saturation=80),
         }
         await websocket.send(
             json.dumps(
