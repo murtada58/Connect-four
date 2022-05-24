@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-
+  import { checkText } from "smile2emoji";
   import { eventTypes, websocket } from "../stores";
   import Message from "./Message.svelte";
 
@@ -108,6 +108,9 @@
         messageInputElement.value = "";
         messageInputElementText = "";
       }
+      const emojiConvertedText = checkText(messageInputElement.value);
+      messageInputElement.value = emojiConvertedText;
+      messageInputElementText = emojiConvertedText;
     }}
     bind:this={messageInputElement}
   />

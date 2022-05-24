@@ -21,6 +21,7 @@
   "dependencies": {
     "node-sass": "^7.0.1",
     "sirv-cli": "^2.0.0",
+    "smile2emoji": "^2.8.0",
     "svelte-preprocess": "^4.10.6"
   }
 }
