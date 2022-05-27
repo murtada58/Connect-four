@@ -44,7 +44,8 @@
       return;
     }
 
-    messages = [...messages, data.message];
+    messages.push(data.message);
+    messages = messages;
   });
 
   let previousTimeStamp = 0;
