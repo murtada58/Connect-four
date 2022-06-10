@@ -3,6 +3,23 @@
   import ActiveGamesList from "./components/ActiveGamesList.svelte";
   import Chat from "./components/Chat.svelte";
 
+  const secretCode = "randombackground";
+  let currentlyTypedCode = new Array(secretCode.length).fill("");
+  document.addEventListener("keydown", (event) => {
+    currentlyTypedCode.push(event.key);
+    currentlyTypedCode.shift();
+    if (currentlyTypedCode.join("").toLowerCase() === secretCode) {
+      fetch(
+        "https://api.giphy.com/v1/gifs/random?api_key=MV4FwEbUqtZib1EuOVvjNiWx322Vt13O&tag=&rating=g"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const gifUrl = data.data.images.original.url;
+          document.body.style.backgroundImage = `url('${gifUrl}')`;
+        });
+    }
+  });
+
   let innerWidth = 0;
   let innerHeight = 0;
 </script>
